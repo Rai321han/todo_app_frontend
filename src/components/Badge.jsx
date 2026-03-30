@@ -1,7 +1,9 @@
-export default function Badge({ type, children }) {
+export default function Badge({ type, children, ...rest }) {
   return (
     <div>
-      <div className={`badge badge-${type}`}>{children}</div>
+      <div className={`cursor-pointer badge badge-${type}`} {...rest}>
+        {children}
+      </div>
     </div>
   );
 }
