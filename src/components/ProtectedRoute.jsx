@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
 
   if (loading) return <div>Loading...</div>;
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAuthenticated) return <Navigate to="/auth?mode=signin" replace />;
 
   return children;
 }

@@ -8,6 +8,7 @@ export default function TodoList() {
   const { getAllTodos } = useTodo();
   const [todos, setTodos] = useState([]);
   const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1 });
+  const [reloadKey, setReloadKey] = useState(0);
   const { filters, handleChangeFilter } = useContext(todocontext);
   const prevStatusRef = useRef(filters.status);
 
@@ -22,7 +23,7 @@ export default function TodoList() {
     };
 
     fetchTodos();
-  }, [filters]);
+  }, [filters, reloadKey]);
 
   // Reset to page 1 when status filter changes
   useEffect(() => {
@@ -33,6 +34,10 @@ export default function TodoList() {
       }
     }
   }, [filters.status, filters.page, handleChangeFilter]);
+
+  const refreshTodos = () => {
+    setReloadKey((prev) => prev + 1);
+  };
 
   return (
     <div className="w-full">
@@ -48,7 +53,7 @@ export default function TodoList() {
         }
         {
           todos.map((todo) => (
-            <Todo key={todo.id} todoData={todo} />
+            <Todo key={todo.id} todoData={todo} onChanged={refreshTodos} />
           ))
         }
       </div>

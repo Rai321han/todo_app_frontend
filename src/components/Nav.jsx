@@ -15,11 +15,11 @@ export default function Nav() {
       <div className="nav-links">
         <Link to={"/dashboard"}>Dashboard</Link>
         {isAuthenticated ? (
-          <button onClick={() => signOut()} className="logout-btn">
+          <button onClick={() => signOut()} className="logout-btn cursor-pointer">
             Logout
           </button>
         ) : (
-          <Link to={"/login"}>Login</Link>
+          <Link to={"/auth?mode=signin"}>SignIn</Link>
         )}
       </div>
     </nav>

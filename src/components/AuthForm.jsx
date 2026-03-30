@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import { replace, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 function InputField({ label, type = "text", value, onChange, right }) {
   return (
@@ -25,7 +25,7 @@ function InputField({ label, type = "text", value, onChange, right }) {
   );
 }
 
-function AuthForm({ mode, onSwitch }) {
+export default function AuthForm({ mode, onSwitch }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -138,9 +138,4 @@ function AuthForm({ mode, onSwitch }) {
       </p>
     </div>
   );
-}
-
-export default function App() {
-  const [mode, setMode] = useState("signin");
-  return <AuthForm mode={mode} onSwitch={setMode} />;
 }
