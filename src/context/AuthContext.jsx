@@ -1,12 +1,7 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export const AuthContext = createContext({});
 
@@ -14,12 +9,13 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false); // true on initial load
+  const [bootLoading, setBootLoading] = useState(true); // ONLY for /me
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   // Fetch current user on app load
   const fetchUser = useCallback(async () => {
-    setLoading(true);
+    setBootLoading(true);
     try {
       const res = await api.get("/auth/me"); // backend reads accessToken cookie
       setUser({
@@ -32,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
     } finally {
-      setLoading(false);
+      setBootLoading(false);
     }
   }, []);
 
@@ -41,19 +37,27 @@ export const AuthProvider = ({ children }) => {
   }, [fetchUser]);
 
   // SignIn
-  const signIn = useCallback(async (email, password) => {
-    setLoading(true);
-    try {
-      await api.post("/auth/login", { email, password });
-      await fetchUser();
-    } catch (err) {
-      setError(err.response?.data?.error || err.message);
-      setUser(null);
-      setIsAuthenticated(false);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchUser]);
+  const signIn = useCallback(
+    async (email, password, redirect) => {
+      setLoading(true);
+      try {
+        await api.post("/auth/login", { email, password });
+        await fetchUser();
+        if (redirect) {
+          navigate(redirect, { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
+      } catch (err) {
+        setError(err.response?.data?.error || err.message);
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchUser]
+  );
 
   // SignUp
   const signUp = useCallback(async (username, email, password) => {
@@ -86,6 +90,14 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     setLoading(false);
   }, []);
+
+  if (bootLoading) {
+    return (
+      <div className="h-screen grid place-items-center">
+        <AiOutlineLoading3Quarters className="animate-spin text-4xl text-green-300" />
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider

@@ -32,8 +32,6 @@
   background-color: #f0f0f0;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap");
-
 .todo-list-container {
   display: flex;
   flex-direction: column;
@@ -62,7 +60,6 @@
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.7 rem;
- 
 }
 .badge-pending {
   background-color: #ffe4b4;

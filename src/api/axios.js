@@ -4,7 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // send HttpOnly cookies automatically
+  withCredentials: true,
 });
 
 // Interceptor for expired access token
@@ -22,7 +22,7 @@ api.interceptors.response.use(
           {},
           { withCredentials: true }
         );
-        return api(originalRequest); // retry original request
+        return api(originalRequest);
       } catch {
         return Promise.reject(error);
       }

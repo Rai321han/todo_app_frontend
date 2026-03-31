@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router";
 
-function InputField({ label, type = "text", value, onChange, right }) {
+function InputField({ label, type = "text", value, onChange, right, name }) {
   return (
     <div className="relative mb-6">
       <label className="mb-1 block text-[12px] tracking-[0.03em] text-slate-400">
@@ -13,7 +13,10 @@ function InputField({ label, type = "text", value, onChange, right }) {
           type={type}
           value={value}
           onChange={onChange}
-          className={`w-full border-0 border-b-[1.5px] border-slate-300 bg-transparent py-2 text-sm text-slate-700 outline-none transition-colors focus:border-b-[#2ec4a9] ${right ? "pr-8" : ""}`}
+          name={name}
+          className={`w-full border-0 border-b-[1.5px] border-slate-300 bg-transparent py-2 text-sm text-slate-700 outline-none transition-colors focus:border-b-[#2ec4a9] ${
+            right ? "pr-8" : ""
+          }`}
         />
         {right && (
           <span className="absolute right-0 top-1/2 flex -translate-y-1/2 cursor-pointer items-center text-slate-400">
@@ -26,9 +29,12 @@ function InputField({ label, type = "text", value, onChange, right }) {
 }
 
 export default function AuthForm({ mode, onSwitch }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    username: "",
+  });
+
   const [showPass, setShowPass] = useState(false);
   const { signIn, signUp, loading, error, isAuthenticated } = useAuth();
   const [authError, setAuthError] = useState(null);
@@ -41,6 +47,15 @@ export default function AuthForm({ mode, onSwitch }) {
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
+    setFormData({
+      email: "",
+      password: "",
+      username: "",
+    });
+    setAuthError(null);
+  }, [mode]);
+
+  useEffect(() => {
     if (error) {
       setAuthError(error);
     }
@@ -48,12 +63,17 @@ export default function AuthForm({ mode, onSwitch }) {
 
   const isSignUp = mode === "signup";
 
+  function handleOnChange(e) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     if (isSignUp) {
-      signUp(username, email, password);
+      signUp(formData.username, formData.email, formData.password);
     } else {
-      signIn(email, password);
+      signIn(formData.email, formData.password, "/dashboard");
     }
   }
 
@@ -78,7 +98,6 @@ export default function AuthForm({ mode, onSwitch }) {
 
   return (
     <div className="w-[320px] rounded-3xl bg-white px-9 pb-9 pt-10 shadow-[0_8px_40px_rgba(0,0,0,0.1)]">
-      {/* Tab Toggle */}
       <div className="mb-8 inline-flex gap-0.5 rounded-full bg-emerald-50 p-1">
         {["signin", "signup"].map((m) => (
           <button
@@ -99,26 +118,30 @@ export default function AuthForm({ mode, onSwitch }) {
       {isSignUp && (
         <InputField
           label="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={formData.username}
+          onChange={(e) => handleOnChange(e)}
+          name="username"
         />
       )}
       <InputField
         label="Email"
         type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        value={formData.email}
+        onChange={(e) => handleOnChange(e)}
+        name="email"
       />
       <InputField
         label="Password"
         type={showPass ? "text" : "password"}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={formData.password}
+        onChange={(e) => handleOnChange(e)}
+        name="password"
         right={eyeIcon}
       />
-      <div>{authError && <p className="text-sm text-rose-500">{authError}</p>}</div>
+      <div>
+        {authError && <p className="text-sm text-rose-500">{authError}</p>}
+      </div>
 
-      {/* Submit */}
       <button
         onClick={(e) => handleSubmit(e)}
         className="mt-1 w-full rounded-[10px] bg-linear-to-r from-[#2ec4a9] to-[#38d9a9] px-3 py-3.25 text-[15px] font-semibold tracking-[0.02em] text-white shadow-[0_2px_12px_rgba(46,196,169,0.25)] transition-all hover:-translate-y-px hover:opacity-90 hover:shadow-[0_4px_16px_rgba(46,196,169,0.35)]"
@@ -126,7 +149,6 @@ export default function AuthForm({ mode, onSwitch }) {
         {loading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}
       </button>
 
-     
       <p className="mt-5 text-center text-[13px] text-slate-400">
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
         <span
