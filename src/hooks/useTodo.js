@@ -1,4 +1,3 @@
-
 import { useCallback, useMemo } from "react";
 import api from "../api/axios";
 
@@ -15,6 +14,16 @@ export default function useTodo() {
         total_pages: 1,
         error: error.message,
       };
+    }
+  }, []);
+
+  const createTodo = useCallback(async (data) => {
+    try {
+      const response = await api.post("/todos", data);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating todo:", error);
+      return null;
     }
   }, []);
 
@@ -43,6 +52,7 @@ export default function useTodo() {
       getAllTodos,
       updateTodo,
       deleteTodo,
+      createTodo,
     }),
     [getAllTodos, updateTodo, deleteTodo]
   );
