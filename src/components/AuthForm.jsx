@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router";
+import { passwordValidator } from "../validator/password";
 
 const emptyFormData = {
   email: "",
@@ -40,6 +41,7 @@ export default function AuthForm({ mode, onSwitch }) {
   const [showPass, setShowPass] = useState(false);
   const { signIn, signUp, loading, error, isAuthenticated } = useAuth();
   const [hasEditedSinceSubmit, setHasEditedSinceSubmit] = useState(false);
+  const [validationError, setValidationError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,9 +65,15 @@ export default function AuthForm({ mode, onSwitch }) {
 
   function handleSubmit(e) {
     e.preventDefault();
+
     setHasEditedSinceSubmit(false);
 
     if (isSignUp) {
+      const passwordError = passwordValidator(formData.password);
+      if (passwordError.message) {
+        setValidationError(passwordError.message);
+        return;
+      }
       signUp(formData.username, formData.email, formData.password);
     } else {
       signIn(formData.email, formData.password, "/dashboard");
@@ -92,14 +100,14 @@ export default function AuthForm({ mode, onSwitch }) {
   );
 
   return (
-    <div className="w-[320px] rounded-3xl bg-white px-9 pb-9 pt-10 shadow-[0_8px_40px_rgba(0,0,0,0.1)]">
+    <div className="w-[320px] rounded-xl bg-white px-9 pb-9 pt-10 shadow-md">
       <div className="mb-8 inline-flex gap-0.5 rounded-full bg-emerald-50 p-1">
         {["signin", "signup"].map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => onSwitch(m)}
-            className={`rounded-full px-5 py-1.75 text-[13.5px] tracking-[0.01em] transition-all ${
+            className={`rounded-lg px-5 py-1.75 text-[13.5px] tracking-[0.01em] transition-all ${
               mode === m
                 ? "bg-[#2ec4a9] font-semibold text-white"
                 : "bg-transparent font-normal text-slate-500"
@@ -136,6 +144,9 @@ export default function AuthForm({ mode, onSwitch }) {
         />
         <div>
           {authError && <p className="text-sm text-rose-500">{authError}</p>}
+          {validationError && (
+            <p className="text-sm text-rose-500">{validationError}</p>
+          )}
         </div>
 
         <button

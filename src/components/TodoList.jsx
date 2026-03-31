@@ -68,12 +68,10 @@ export default function TodoList() {
 
   const handleCreateTodo = async () => {
     if (!todoData.title.trim()) {
-      alert("Title cannot be empty.");
       return;
     }
 
     if (!todoData.description.trim()) {
-      alert("Description cannot be empty.");
       return;
     }
 
@@ -107,6 +105,18 @@ export default function TodoList() {
           </div>
         )}
 
+        <div className="controller_buttons_container mt-5 w-fit mx-auto">
+          <button
+            onClick={() => setModalOpen(true)}
+            className="cursor-pointer px-3 py-2 rounded-md hover:text-green-500 hover:underline underline-offset-2"
+          >
+            <div className="flex flex-row gap-2 items-center justify-center">
+              <p>Add Todo</p>
+              <FaCirclePlus className="fill-green-500" />
+            </div>
+          </button>
+        </div>
+
         {!isLoading && !fetchError && todos.length === 0 && (
           <div className="text-gray-500 h-[90vh] w-full flex items-center justify-center">
             <div>No todos found.</div>
@@ -115,17 +125,6 @@ export default function TodoList() {
 
         {!isLoading && !fetchError && (
           <>
-            <div className="controller_buttons_container mt-5 w-fit mx-auto">
-              <button
-                onClick={() => setModalOpen(true)}
-                className="cursor-pointer px-3 py-2 rounded-md hover:text-green-500 hover:underline underline-offset-2"
-              >
-                <div className="flex flex-row gap-2 items-center justify-center">
-                  <p>Add Todo</p>
-                  <FaCirclePlus className="fill-green-500" />
-                </div>
-              </button>
-            </div>
             <div className="flex flex-row flex-wrap gap-2">
               {todos.map((todo) => (
                 <Todo key={todo.id} todoData={todo} onChanged={refreshTodos} />
@@ -141,8 +140,9 @@ export default function TodoList() {
             label={"Fill in the details of your new todo and save it."}
             editData={todoData}
             handleEditChange={handleInputChange}
-            handleUpdate={() => {
-              const created = handleCreateTodo();
+            handleUpdate={async (e) => {
+              e.preventDefault();
+              const created = await handleCreateTodo();
               if (created) {
                 setModalOpen(false);
                 setTodoData({

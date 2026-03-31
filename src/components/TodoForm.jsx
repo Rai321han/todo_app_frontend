@@ -8,7 +8,8 @@ export default function TodoForm({
 }) {
   return (
     <div>
-      <div
+      <form
+        onSubmit={handleUpdate}
         className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden"
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
@@ -29,6 +30,7 @@ export default function TodoForm({
             <input
               type="text"
               name="title"
+              required
               value={editData.title}
               onChange={(e) => handleEditChange("title", e.target.value)}
               placeholder="Enter todo title"
@@ -42,6 +44,7 @@ export default function TodoForm({
             </label>
             <textarea
               name="description"
+              required
               value={editData.description}
               onChange={(e) => handleEditChange("description", e.target.value)}
               placeholder="Add a short description…"
@@ -54,19 +57,20 @@ export default function TodoForm({
         {/* Footer / Actions */}
         <div className="px-8 pb-8 flex items-center justify-end gap-3">
           <button
+            type="button"
             onClick={() => setModalOpen(false)}
             className="px-5 py-2.5 text-sm font-medium text-[#374151] bg-white border border-[#e5e7eb] rounded-lg hover:bg-[#f9fafb] active:bg-[#f3f4f6] transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
-            onClick={handleUpdate}
+            type="submit"
             className="px-5 py-2.5 text-sm font-semibold text-white bg-[#111827] rounded-lg hover:bg-[#1f2937] active:bg-[#374151] transition-colors cursor-pointer"
           >
             Save
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
