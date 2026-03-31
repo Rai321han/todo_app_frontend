@@ -6,6 +6,7 @@ import { TodoContext } from "../context/TodoContext";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaCirclePlus } from "react-icons/fa6";
 import Modal from "./Modal";
+import TodoForm from "./TodoForm";
 
 export default function TodoList() {
   const { getAllTodos, createTodo } = useTodo();
@@ -24,8 +25,7 @@ export default function TodoList() {
     description: "",
   });
 
-  function handleInputChange(e) {
-    const { name, value } = e.target;
+  function handleInputChange(name, value) {
     setTodoData((prev) => ({ ...prev, [name]: value }));
   }
 
@@ -134,54 +134,25 @@ export default function TodoList() {
           </>
         )}
       </div>
-
       {isModalOpen && (
         <Modal>
-          <div className="bg-white p-5 rounded-md max-w-md w-full">
-            <h2 className="text-xl font-semibold mb-4">Add Todo</h2>
-            {/* Form fields for title, description, etc. */}
-            <form>
-              {/* Example input field */}
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={todoData.title}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Description</label>
-                <textarea
-                  name="description"
-                  value={todoData.description}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-            </form>
-            <div className="flex flex-row gap-2">
-              <button
-                className="mt-4 px-4 cursor-pointer py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                onClick={async () => {
-                  const created = await handleCreateTodo();
-                  if (created) setModalOpen(false);
-                }}
-              >
-                Add Todo
-              </button>
-              <button
-                className="mt-4 px-4 py-2 cursor-pointer border border-gray-300 text-gray-700 rounded-md hover:bg-gray-200"
-                onClick={() => {
-                  setModalOpen(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+          <TodoForm
+            title={"Create New Todo"}
+            label={"Fill in the details of your new todo and save it."}
+            editData={todoData}
+            handleEditChange={handleInputChange}
+            handleUpdate={() => {
+              const created = handleCreateTodo();
+              if (created) {
+                setModalOpen(false);
+                setTodoData({
+                  title: "",
+                  description: "",
+                });
+              }
+            }}
+            setModalOpen={setModalOpen}
+          />
         </Modal>
       )}
 

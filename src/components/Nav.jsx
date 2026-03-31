@@ -8,14 +8,17 @@ export default function Nav() {
       <div className="nav-user">
         {user && (
           <span>
-            Hello, <strong>{user.username}</strong> !
+            Hello, <strong>{user.username}</strong>!
           </span>
         )}
       </div>
       <div className="nav-links">
         <Link to={"/dashboard"}>Dashboard</Link>
         {isAuthenticated ? (
-          <button onClick={() => signOut()} className="logout-btn cursor-pointer">
+          <button
+            onClick={() => signOut()}
+            className="logout-btn cursor-pointer"
+          >
             Logout
           </button>
         ) : (

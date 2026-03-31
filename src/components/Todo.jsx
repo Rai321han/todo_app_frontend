@@ -5,6 +5,7 @@ import { MdNotes } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
 import Modal from "./Modal";
 import { formatDate } from "../utils/formatedDate";
+import TodoForm from "./TodoForm";
 
 function Todo({ todoData, onChanged }) {
   const { id, title, description, is_completed, created_at } = todoData;
@@ -101,39 +102,14 @@ function Todo({ todoData, onChanged }) {
 
         {modalOpen && (
           <Modal>
-            <div className="bg-white p-5 rounded-md max-w-md w-full">
-              <h2 className="text-xl font-semibold mb-4">Edit Todo</h2>
-              <input
-                type="text"
-                value={editData.title}
-                onChange={(e) => handleEditChange("title", e.target.value)}
-                className="w-full mb-3 px-3 py-2 border-b border-b-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Title"
-              />
-              <textarea
-                value={editData.description}
-                onChange={(e) =>
-                  handleEditChange("description", e.target.value)
-                }
-                className="w-full mb-3 px-3 py-2 border-b border-b-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Description"
-                rows={4}
-              />
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleUpdate}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
+            <TodoForm
+              title="Edit Todo"
+              label="Make changes to your todo and save them."
+              editData={editData}
+              handleEditChange={handleEditChange}
+              handleUpdate={handleUpdate}
+              setModalOpen={setModalOpen}
+            />
           </Modal>
         )}
         <div>
