@@ -33,6 +33,12 @@ export default function TodoList() {
     setReloadKey((prev) => prev + 1);
   }, []);
 
+  const handleTodoUpdated = useCallback((updatedTodo) => {
+    setTodos((prev) =>
+      prev.map((t) => (t.id === updatedTodo.id ? updatedTodo : t))
+    );
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
 

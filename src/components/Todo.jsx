@@ -28,11 +28,6 @@ function Todo({ todoData, onChanged }) {
 
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleChange = () => {
-    setIsChecked(!isChecked);
-    handleUpdate();
-  };
-
   const handleUpdate = async () => {
     const updatedTodo = await updateTodo(id, {
       ...todoData,

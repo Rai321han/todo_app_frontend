@@ -63,7 +63,17 @@ todo_app_frontend/
 ## Installation
 
 1. Clone the repository.
+
+```bash
+git clone https://github.com/Rai321han/todo_app_frontend.git
+```
+
 2. Move into the project directory.
+
+```bash
+cd todo_app_frontend
+```
+
 3. Install dependencies:
 
 ```bash
