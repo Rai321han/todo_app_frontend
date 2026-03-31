@@ -1,24 +1,41 @@
-import { createContext, useState } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 
-export const todocontext = createContext()
+export const TodoContext = createContext();
 
-const TodoProvider = ({children}) => {
+const TodoProvider = ({ children }) => {
     const [filters, setFilters] = useState({
         status: "",
-        page: 1
-    })
+        page: 1,
+    });
 
-    function handleChangeFilter(name, value) {
-        setFilters(prev => {
-            return {...prev, [name]: value}
-        })
-    }
+    const handleChangeFilter = useCallback((name, value) => {
+        setFilters((prev) => {
+            if (name === "status") {
+                if (prev.status === value) {
+                    return prev;
+                }
 
-    return (
-        <todocontext.Provider value={{filters, handleChangeFilter}}>
-            {children}
-        </todocontext.Provider>
-    )
-}
+                return {
+                    ...prev,
+                    status: value,
+                    page: 1,
+                };
+            }
 
-export default TodoProvider
+            if (prev[name] === value) {
+                return prev;
+            }
+
+            return { ...prev, [name]: value };
+        });
+    }, []);
+
+    const value = useMemo(
+        () => ({ filters, handleChangeFilter }),
+        [filters, handleChangeFilter]
+    );
+
+    return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;
+};
+
+export default TodoProvider;

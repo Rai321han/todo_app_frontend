@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useMemo, useState } from "react";
 import useTodo from "../hooks/useTodo";
 import Badge from "./Badge";
 import { MdNotes } from "react-icons/md";
@@ -6,38 +6,64 @@ import { RxCross1 } from "react-icons/rx";
 import Modal from "./Modal";
 import { formatDate } from "../utils/formatedDate";
 
-export default function Todo({ todoData, onChanged }) {
-  const [data, setData] = useState(todoData);
+function Todo({ todoData, onChanged }) {
+  const { id, title, description, is_completed, created_at } = todoData;
+  const [editData, setEditData] = useState({
+    title,
+    description,
+  });
 
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const { updateTodo, deleteTodo } = useTodo();
-  const formattedDate = formatDate(todoData.created_at);
+  const formattedDate = useMemo(() => formatDate(created_at), [created_at]);
 
   const handleDelete = async () => {
-    const isDeleted = await deleteTodo(todoData.id);
+    const isDeleted = await deleteTodo(id);
+
     if (isDeleted && onChanged) {
       onChanged();
     }
   };
 
   const handleUpdate = async () => {
-    const updatedTodo = await updateTodo(todoData.id, { ...data });
+    const updatedTodo = await updateTodo(id, {
+      ...todoData,
+      title: editData.title,
+      description: editData.description,
+    });
+
     if (updatedTodo && onChanged) {
+      setModalOpen(false);
       onChanged();
     }
   };
 
   const handleToggleStatus = async () => {
-    const updatedTodo = await updateTodo(todoData.id, {
+    const updatedTodo = await updateTodo(id, {
       ...todoData,
-      is_completed: !todoData.is_completed,
+      is_completed: !is_completed,
     });
 
     if (updatedTodo && onChanged) {
       onChanged();
     }
+  };
+
+  const openEditModal = () => {
+    setEditData({
+      title,
+      description,
+    });
+    setModalOpen(true);
+  };
+
+  const handleEditChange = (name, value) => {
+    setEditData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
@@ -65,7 +91,7 @@ export default function Todo({ todoData, onChanged }) {
               Delete
             </button>
             <button
-              onClick={() => setModalOpen(true)}
+              onClick={openEditModal}
               className="text-blue-500 bg-gray-50 rounded-md hover:text-blue-700 px-2 py-1  mt-2"
             >
               Edit
@@ -79,15 +105,15 @@ export default function Todo({ todoData, onChanged }) {
               <h2 className="text-xl font-semibold mb-4">Edit Todo</h2>
               <input
                 type="text"
-                value={data.title}
-                onChange={(e) => setData({ ...data, title: e.target.value })}
+                value={editData.title}
+                onChange={(e) => handleEditChange("title", e.target.value)}
                 className="w-full mb-3 px-3 py-2 border-b border-b-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Title"
               />
               <textarea
-                value={data.description}
+                value={editData.description}
                 onChange={(e) =>
-                  setData({ ...data, description: e.target.value })
+                  handleEditChange("description", e.target.value)
                 }
                 className="w-full mb-3 px-3 py-2 border-b border-b-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Description"
@@ -101,10 +127,7 @@ export default function Todo({ todoData, onChanged }) {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    handleUpdate();
-                    setModalOpen(false);
-                  }}
+                  onClick={handleUpdate}
                   className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                 >
                   Save
@@ -116,13 +139,13 @@ export default function Todo({ todoData, onChanged }) {
         <div>
           <div className="text-sm">{formattedDate}</div>
           <div className="font-semibold text-xl max-w-50 truncate text-black/70 mb-1">
-            {todoData.title}
+            {title}
           </div>
           <div className="text-gray-600 max-w-50 line-clamp-3 leading-relaxed">
-            {todoData.description}
+            {description}
           </div>
           <div className="mt-4">
-            {todoData.is_completed ? (
+            {is_completed ? (
               <Badge type="completed" onClick={handleToggleStatus}>
                 Completed
               </Badge>
@@ -137,3 +160,5 @@ export default function Todo({ todoData, onChanged }) {
     </div>
   );
 }
+
+export default memo(Todo);

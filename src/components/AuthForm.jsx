@@ -65,6 +65,11 @@ export default function AuthForm({ mode, onSwitch }) {
 
   function handleOnChange(e) {
     const { name, value } = e.target;
+
+    if (authError) {
+      setAuthError(null);
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
@@ -102,6 +107,7 @@ export default function AuthForm({ mode, onSwitch }) {
         {["signin", "signup"].map((m) => (
           <button
             key={m}
+            type="button"
             onClick={() => onSwitch(m)}
             className={`rounded-full px-5 py-1.75 text-[13.5px] tracking-[0.01em] transition-all ${
               mode === m
@@ -114,40 +120,42 @@ export default function AuthForm({ mode, onSwitch }) {
         ))}
       </div>
 
-      {/* Fields */}
-      {isSignUp && (
+      <form onSubmit={handleSubmit}>
+        {isSignUp && (
+          <InputField
+            label="Username"
+            value={formData.username}
+            onChange={handleOnChange}
+            name="username"
+          />
+        )}
         <InputField
-          label="Username"
-          value={formData.username}
-          onChange={(e) => handleOnChange(e)}
-          name="username"
+          label="Email"
+          type="email"
+          value={formData.email}
+          onChange={handleOnChange}
+          name="email"
         />
-      )}
-      <InputField
-        label="Email"
-        type="email"
-        value={formData.email}
-        onChange={(e) => handleOnChange(e)}
-        name="email"
-      />
-      <InputField
-        label="Password"
-        type={showPass ? "text" : "password"}
-        value={formData.password}
-        onChange={(e) => handleOnChange(e)}
-        name="password"
-        right={eyeIcon}
-      />
-      <div>
-        {authError && <p className="text-sm text-rose-500">{authError}</p>}
-      </div>
+        <InputField
+          label="Password"
+          type={showPass ? "text" : "password"}
+          value={formData.password}
+          onChange={handleOnChange}
+          name="password"
+          right={eyeIcon}
+        />
+        <div>
+          {authError && <p className="text-sm text-rose-500">{authError}</p>}
+        </div>
 
-      <button
-        onClick={(e) => handleSubmit(e)}
-        className="mt-1 w-full rounded-[10px] bg-linear-to-r from-[#2ec4a9] to-[#38d9a9] px-3 py-3.25 text-[15px] font-semibold tracking-[0.02em] text-white shadow-[0_2px_12px_rgba(46,196,169,0.25)] transition-all hover:-translate-y-px hover:opacity-90 hover:shadow-[0_4px_16px_rgba(46,196,169,0.35)]"
-      >
-        {loading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}
-      </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-1 w-full rounded-[10px] bg-linear-to-r from-[#2ec4a9] to-[#38d9a9] px-3 py-3.25 text-[15px] font-semibold tracking-[0.02em] text-white shadow-[0_2px_12px_rgba(46,196,169,0.25)] transition-all hover:-translate-y-px hover:opacity-90 hover:shadow-[0_4px_16px_rgba(46,196,169,0.35)] disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {loading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}
+        </button>
+      </form>
 
       <p className="mt-5 text-center text-[13px] text-slate-400">
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}

@@ -1,79 +1,68 @@
-import { useContext } from "react";
-import { todocontext } from "../context/TodoContext";
+import { useContext, useMemo } from "react";
+import { TodoContext } from "../context/TodoContext";
 
 export default function Pagination({ currentPage, totalPages }) {
-  const { handleChangeFilter } = useContext(todocontext);
+  const { handleChangeFilter } = useContext(TodoContext);
 
   if (totalPages <= 1) return null;
 
-  // Determine which page numbers to display
-  const getPageNumbers = () => {
+  const pageNumbers = useMemo(() => {
     const pages = [];
-    const maxVisible = 5; // Maximum page numbers to show (excluding dots)
-    const siblingsCount = 1; // Number of pages to show on each side of current page
+    const maxVisible = 5;
+    const siblingsCount = 1;
 
-    // Always show first page
     pages.push(1);
 
-    // Calculate the range around current page
     let leftSibling = Math.max(2, currentPage - siblingsCount);
     let rightSibling = Math.min(totalPages - 1, currentPage + siblingsCount);
 
-    // Adjust range if current page is near start or end
     if (currentPage <= maxVisible - siblingsCount) {
       rightSibling = Math.min(totalPages - 1, maxVisible - 1);
     }
+
     if (currentPage > totalPages - maxVisible + siblingsCount) {
       leftSibling = Math.max(2, totalPages - maxVisible + 2);
     }
 
-    // Add left dots if needed
     if (leftSibling > 2) {
       pages.push("...");
     }
 
-    // Add pages around current page
     for (let i = leftSibling; i <= rightSibling; i++) {
       if (!pages.includes(i)) {
         pages.push(i);
       }
     }
 
-    // Add right dots if needed
     if (rightSibling < totalPages - 1) {
       pages.push("...");
     }
 
-    // Always show last page if more than one page
     if (totalPages > 1 && !pages.includes(totalPages)) {
       pages.push(totalPages);
     }
 
     return pages;
-  };
+  }, [currentPage, totalPages]);
 
   const handlePageClick = (page) => {
     if (page === "...") return;
+    if (page < 1 || page > totalPages || page === currentPage) return;
     handleChangeFilter("page", page);
   };
 
   const handleClickDots = (direction) => {
     if (direction === "left") {
-      // Jump left by showing pages on the left side
       const newPage = Math.max(1, currentPage - 5);
       handleChangeFilter("page", newPage);
     } else {
-      // Jump right by showing pages on the right side
       const newPage = Math.min(totalPages, currentPage + 5);
       handleChangeFilter("page", newPage);
     }
   };
 
-  const pageNumbers = getPageNumbers();
-
   return (
     <div className="flex items-center justify-center gap-2 mt-8 mb-4">
-      {/* Start button */}
       <button
         onClick={() => handlePageClick(1)}
         disabled={currentPage === 1}
@@ -83,7 +72,6 @@ export default function Pagination({ currentPage, totalPages }) {
         ⏮
       </button>
 
-      {/* Previous button */}
       <button
         onClick={() => handlePageClick(currentPage - 1)}
         disabled={currentPage === 1}
@@ -93,11 +81,10 @@ export default function Pagination({ currentPage, totalPages }) {
         ◀
       </button>
 
-      {/* Page numbers */}
       {pageNumbers.map((page, index) => {
         if (page === "...") {
-          // Determine if this is left or right dots
           const isLeftDots = index < pageNumbers.indexOf(currentPage);
+
           return (
             <button
               key={`dots-${index}`}
@@ -125,7 +112,6 @@ export default function Pagination({ currentPage, totalPages }) {
         );
       })}
 
-      {/* Next button */}
       <button
         onClick={() => handlePageClick(currentPage + 1)}
         disabled={currentPage === totalPages}
@@ -135,7 +121,6 @@ export default function Pagination({ currentPage, totalPages }) {
         ▶
       </button>
 
-      {/* End button */}
       <button
         onClick={() => handlePageClick(totalPages)}
         disabled={currentPage === totalPages}
