@@ -1,49 +1,44 @@
-import { useContext, useMemo } from "react";
-import { TodoContext } from "../context/TodoContext";
+import { useContext } from "react";
+import TodoContext from "../context/todo-context";
 
 export default function Pagination({ currentPage, totalPages }) {
   const { handleChangeFilter } = useContext(TodoContext);
+  const pageNumbers = [];
+  const maxVisible = 5;
+  const siblingsCount = 1;
+
+  pageNumbers.push(1);
+
+  let leftSibling = Math.max(2, currentPage - siblingsCount);
+  let rightSibling = Math.min(totalPages - 1, currentPage + siblingsCount);
+
+  if (currentPage <= maxVisible - siblingsCount) {
+    rightSibling = Math.min(totalPages - 1, maxVisible - 1);
+  }
+
+  if (currentPage > totalPages - maxVisible + siblingsCount) {
+    leftSibling = Math.max(2, totalPages - maxVisible + 2);
+  }
+
+  if (leftSibling > 2) {
+    pageNumbers.push("...");
+  }
+
+  for (let i = leftSibling; i <= rightSibling; i++) {
+    if (!pageNumbers.includes(i)) {
+      pageNumbers.push(i);
+    }
+  }
+
+  if (rightSibling < totalPages - 1) {
+    pageNumbers.push("...");
+  }
+
+  if (totalPages > 1 && !pageNumbers.includes(totalPages)) {
+    pageNumbers.push(totalPages);
+  }
 
   if (totalPages <= 1) return null;
-
-  const pageNumbers = useMemo(() => {
-    const pages = [];
-    const maxVisible = 5;
-    const siblingsCount = 1;
-
-    pages.push(1);
-
-    let leftSibling = Math.max(2, currentPage - siblingsCount);
-    let rightSibling = Math.min(totalPages - 1, currentPage + siblingsCount);
-
-    if (currentPage <= maxVisible - siblingsCount) {
-      rightSibling = Math.min(totalPages - 1, maxVisible - 1);
-    }
-
-    if (currentPage > totalPages - maxVisible + siblingsCount) {
-      leftSibling = Math.max(2, totalPages - maxVisible + 2);
-    }
-
-    if (leftSibling > 2) {
-      pages.push("...");
-    }
-
-    for (let i = leftSibling; i <= rightSibling; i++) {
-      if (!pages.includes(i)) {
-        pages.push(i);
-      }
-    }
-
-    if (rightSibling < totalPages - 1) {
-      pages.push("...");
-    }
-
-    if (totalPages > 1 && !pages.includes(totalPages)) {
-      pages.push(totalPages);
-    }
-
-    return pages;
-  }, [currentPage, totalPages]);
 
   const handlePageClick = (page) => {
     if (page === "...") return;

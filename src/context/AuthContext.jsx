@@ -1,5 +1,4 @@
 import {
-  createContext,
   useState,
   useEffect,
   useCallback,
@@ -8,8 +7,7 @@ import {
 import api from "../api/axios";
 import { useNavigate } from "react-router";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
-export const AuthContext = createContext({});
+import AuthContext from "./auth-context";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

@@ -1,6 +1,5 @@
-import { createContext, useCallback, useMemo, useState } from "react";
-
-export const TodoContext = createContext();
+import { useCallback, useMemo, useState } from "react";
+import TodoContext from "./todo-context";
 
 const TodoProvider = ({ children }) => {
     const [filters, setFilters] = useState({

@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import useTodo from "../hooks/useTodo";
 import Todo from "./Todo";
 import Pagination from "./Pagination";
-import { TodoContext } from "../context/TodoContext";
+import TodoContext from "../context/todo-context";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaCirclePlus } from "react-icons/fa6";
 import Modal from "./Modal";

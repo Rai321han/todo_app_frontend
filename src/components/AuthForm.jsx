@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router";
 
+const emptyFormData = {
+  email: "",
+  password: "",
+  username: "",
+};
+
 function InputField({ label, type = "text", value, onChange, right, name }) {
   return (
     <div className="relative mb-6">
@@ -29,15 +35,11 @@ function InputField({ label, type = "text", value, onChange, right, name }) {
 }
 
 export default function AuthForm({ mode, onSwitch }) {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    username: "",
-  });
+  const [formData, setFormData] = useState(emptyFormData);
 
   const [showPass, setShowPass] = useState(false);
   const { signIn, signUp, loading, error, isAuthenticated } = useAuth();
-  const [authError, setAuthError] = useState(null);
+  const [hasEditedSinceSubmit, setHasEditedSinceSubmit] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,28 +48,14 @@ export default function AuthForm({ mode, onSwitch }) {
     }
   }, [isAuthenticated, navigate]);
 
-  useEffect(() => {
-    setFormData({
-      email: "",
-      password: "",
-      username: "",
-    });
-    setAuthError(null);
-  }, [mode]);
-
-  useEffect(() => {
-    if (error) {
-      setAuthError(error);
-    }
-  }, [error]);
-
   const isSignUp = mode === "signup";
+  const authError = hasEditedSinceSubmit ? null : error;
 
   function handleOnChange(e) {
     const { name, value } = e.target;
 
-    if (authError) {
-      setAuthError(null);
+    if (!hasEditedSinceSubmit) {
+      setHasEditedSinceSubmit(true);
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -75,6 +63,8 @@ export default function AuthForm({ mode, onSwitch }) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    setHasEditedSinceSubmit(false);
+
     if (isSignUp) {
       signUp(formData.username, formData.email, formData.password);
     } else {

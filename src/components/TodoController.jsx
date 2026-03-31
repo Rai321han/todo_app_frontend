@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { TodoContext } from "../context/TodoContext";
+import TodoContext from "../context/todo-context";
 
 export default function TodoController() {
   const { handleChangeFilter, filters } = useContext(TodoContext);

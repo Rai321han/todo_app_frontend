@@ -54,6 +54,6 @@ export default function useTodo() {
       deleteTodo,
       createTodo,
     }),
-    [getAllTodos, updateTodo, deleteTodo]
+    [getAllTodos, updateTodo, deleteTodo, createTodo]
   );
 }
