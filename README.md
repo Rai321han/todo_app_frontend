@@ -1,6 +1,6 @@
 # Todo App Frontend
 
-A React + Vite frontend for a full-stack todo application with authentication, protected routes, todo management, filtering, and pagination. This app connects to the backend API available at `https://github.com/Rai321han/todo-api`.
+A React + Vite frontend for a full-stack todo application with authentication, protected routes, todo management, filtering, and pagination. This app connects to the backend API available at [https://github.com/Rai321han/todo-api](https://github.com/Rai321han/todo-api).
 
 ## Table of Contents
 
