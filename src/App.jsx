@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router";
+import { Routes, Route, Navigate } from "react-router";
 import "./App.css";
 import Layout from "./components/Layout";
 import Auth from "./pages/Auth";
@@ -11,6 +11,7 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="/auth" element={<Auth />} />
           <Route
             path="/dashboard"
