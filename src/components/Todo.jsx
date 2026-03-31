@@ -4,6 +4,7 @@ import Badge from "./Badge";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import Modal from "./Modal";
 import { formatDate } from "../utils/formatedDate";
+import { FaRegCircleCheck } from "react-icons/fa6";
 import TodoForm from "./TodoForm";
 
 function Todo({ todoData, onChanged }) {
@@ -100,20 +101,24 @@ function Todo({ todoData, onChanged }) {
 
         <div>
           <div className="text-sm">{formattedDate}</div>
-          <div className="font-semibold text-xl max-w-50 truncate text-black/70 mb-1">
-            {title}
+
+          <div className="flex flex-row gap-2 items-center">
+            <div className="font-semibold text-xl max-w-50 truncate text-black/70 mb-1">
+              {title}
+            </div>
+            {is_completed && <FaRegCircleCheck className="fill-green-500" />}
           </div>
           <div className="text-gray-600 max-w-50 line-clamp-3 leading-relaxed">
             {description}
           </div>
           <div className="mt-4">
             {is_completed ? (
-              <Badge type="completed" onClick={handleToggleStatus}>
-                Completed
+              <Badge type="pending" onClick={handleToggleStatus}>
+                Mark as Pending
               </Badge>
             ) : (
-              <Badge type="pending" onClick={handleToggleStatus}>
-                Pending
+              <Badge type="completed" onClick={handleToggleStatus}>
+                Mark as Completed
               </Badge>
             )}
           </div>
