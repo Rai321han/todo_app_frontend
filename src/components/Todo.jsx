@@ -4,22 +4,16 @@ import Badge from "./Badge";
 import { MdNotes } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
 import Modal from "./Modal";
+import { formatDate } from "../utils/formatedDate";
 
 export default function Todo({ todoData, onChanged }) {
-  const formattedDate = new Date(todoData.created_at).toLocaleDateString(
-    "en-US",
-    {
-      day: "2-digit",
-      month: "long",
-      year: "2-digit",
-    }
-  );
-
   const [data, setData] = useState(todoData);
+
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const { updateTodo, deleteTodo } = useTodo();
+  const formattedDate = formatDate(todoData.created_at);
 
   const handleDelete = async () => {
     const isDeleted = await deleteTodo(todoData.id);
@@ -78,6 +72,7 @@ export default function Todo({ todoData, onChanged }) {
             </button>
           </div>
         )}
+
         {modalOpen && (
           <Modal>
             <div className="bg-white p-5 rounded-md max-w-md w-full">
